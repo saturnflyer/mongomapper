@@ -18,9 +18,10 @@ require 'matchy'
 require 'shoulda'
 require 'timecop'
 require 'mocha'
+require 'ruby-debug'
 
 class Test::Unit::TestCase
-  def Doc(name=nil, &block)
+  def Doc(name='Class', &block)
     klass = Class.new do
       include MongoMapper::Document
       set_collection_name :test
@@ -36,7 +37,7 @@ class Test::Unit::TestCase
     klass
   end
 
-  def EDoc(name=nil, &block)
+  def EDoc(name='Class', &block)
     klass = Class.new do
       include MongoMapper::EmbeddedDocument
 
@@ -76,12 +77,12 @@ class Test::Unit::TestCase
     if expected_message.nil?
       matcher.positive_failure_message = "#{receiver} had no errors on #{attribute}"
       matcher.negative_failure_message = "#{receiver} had errors on #{attribute} #{receiver.errors.inspect}"
-      !receiver.errors.on(attribute).blank?
+      !receiver.errors[attribute].blank?
     else
-      actual = receiver.errors.on(attribute)
+      actual = receiver.errors[attribute]
       matcher.positive_failure_message = %Q(Expected error on #{attribute} to be "#{expected_message}" but was "#{actual}")
       matcher.negative_failure_message = %Q(Expected error on #{attribute} not to be "#{expected_message}" but was "#{actual}")
-      actual == expected_message
+      actual.include? expected_message
     end
   end
 

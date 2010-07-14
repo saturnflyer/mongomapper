@@ -6,6 +6,14 @@ module MongoMapper
     def self.included(model)
       model.class_eval do
         extend  Plugins
+        
+        # TODO: Extract to plugin
+        include ActiveModel::Serializers::Xml
+        include ActiveModel::Conversion
+        include ActiveModel::Naming
+        include ActiveModel::Serialization
+        include ActiveModel::Serializers::JSON
+        extend ActiveModel::Translation
 
         plugin Plugins::Document
         plugin Plugins::Querying # for now needs to be before associations (save_to_collection)
